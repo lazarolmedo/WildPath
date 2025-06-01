@@ -5,10 +5,10 @@ import PerfilView from '../views/PerfilView.vue'
 import RutaIndividualView from '../views/RutaIndividualView.vue'
 
 const routes = [
-  { path: '/', name: 'Home', component: HomeView },
-  { path: '/grabar', name: 'GrabarRuta', component: GrabarRutaView },
-  { path: '/perfil', name: 'Perfil', component: PerfilView },
-  { path: '/ruta/:id', name: 'RutaIndividual', component: RutaIndividualView }
+  { path: '/', name: 'home', component: HomeView },
+  { path: '/grabar', name: 'grabar', component: GrabarRutaView },
+  { path: '/perfil', name: 'perfil', component: PerfilView },
+  { path: '/ruta/:id', name: 'rutaIndividual', component: RutaIndividualView }
 ]
 
 const router = createRouter({
@@ -17,5 +17,3 @@ const router = createRouter({
 })
 
 export default router
-
-
