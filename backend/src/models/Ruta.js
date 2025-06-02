@@ -15,3 +15,5 @@ const rutaSchema = new mongoose.Schema({
 
 const Ruta = mongoose.model('Ruta', rutaSchema);
 export default Ruta;
+
+

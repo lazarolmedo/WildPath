@@ -14,17 +14,18 @@ export async function listarRutas(req, res) {
 // POST /api/rutas
 export async function crearRuta(req, res) {
   try {
-    const { id, nombre, ubicacion, imagen, tipo, recorrido } = req.body;
+    const { nombre, ubicacion, imagen, tipo, recorrido } = req.body;
 
-    if (tipo !== 'fija' || !Array.isArray(recorrido) || recorrido.length === 0) {
+    if (!Array.isArray(recorrido) || recorrido.length === 0) {
       return res.status(400).json({ error: 'Tipo de ruta inválido o recorrido vacío' });
     }
 
-    const nuevaRuta = new Ruta({ id, nombre, ubicacion, imagen, tipo, recorrido });
+    const nuevaRuta = new Ruta({ nombre, ubicacion, imagen, tipo, recorrido });
     await nuevaRuta.save();
 
     res.status(201).json(nuevaRuta);
   } catch (error) {
+    console.error('❌ Error al crear la ruta:', error);
     res.status(500).json({ error: 'Error al crear la ruta' });
   }
 }
