@@ -59,7 +59,8 @@ Servidor activo en: `http://localhost:3000`
 
 ---
 
-## Uris REST disponibles
+## Uris REST disponibles 
+(http://localhost:3000/api/rutas)
 
 ### `GET /api/rutas`
 Devuelve un listado completo de todas las rutas.

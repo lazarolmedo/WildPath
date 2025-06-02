@@ -1,19 +1,43 @@
 import mongoose from 'mongoose';
 
-const coordenadaSchema = new mongoose.Schema({
-  lat: { type: Number, required: true },
-  lng: { type: Number, required: true }
-}, { _id: false }); // No genera _id para cada punto
-
-const rutaSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  ubicacion: { type: String, required: true },
-  imagen: { type: String, required: true },
-  tipo: { type: String, enum: ['fija'], required: true },
-  recorrido: { type: [coordenadaSchema], required: true }
+const ComentarioSchema = new mongoose.Schema({
+  usuarioId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Usuario'
+  },
+  texto: {
+    type: String,
+    required: true
+  },
+  fecha: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const Ruta = mongoose.model('Ruta', rutaSchema);
-export default Ruta;
+const RutaSchema = new mongoose.Schema({
+  nombre: String,
+  ubicacion: String,
+  imagen: String,
+  descripcion: String,
+  dificultad: {
+    type: String,
+    enum: ['baja', 'media', 'alta']
+  },
+  distanciaKm: Number,
+  duracionEstimada: Number,
+  altitud: Number,
+  recorrido: [
+    {
+      lat: Number,
+      lng: Number
+    }
+  ],
+  comentarios: {
+    type: [ComentarioSchema],
+    default: []
+  }
+});
 
-
+export default mongoose.model('Ruta', RutaSchema);
