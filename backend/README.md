@@ -68,7 +68,7 @@ Devuelve un listado completo de todas las rutas.
 Crea una nueva ruta fija.  
 Requiere un JSON con `nombre`, `ubicacion`, `imagen`, `tipo` y `recorrido`.
 
-Consulta la documentación completa en [`backend/docs/api_rest.md`](./)
+Consulta la documentación completa en [`backend/docs/api_rest.md`](./docs/apirest.md)
 
 ---
 
