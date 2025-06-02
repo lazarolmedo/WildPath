@@ -69,7 +69,6 @@ export async function agregarComentario(req, res) {
     const nuevoComentario = {
       usuarioId,
       texto,
-      valoracion: valoracion || 0,
       fecha: fecha ? new Date(fecha) : new Date()
     };
 
@@ -78,7 +77,7 @@ export async function agregarComentario(req, res) {
 
     res.status(201).json({ mensaje: 'Comentario añadido', comentario: nuevoComentario });
   } catch (error) {
-    console.error('❌ Error al añadir el comentario:', error);
+    console.error('Error al añadir el comentario:', error);
     res.status(500).json({ error: 'Error al añadir el comentario' });
   }
 }
