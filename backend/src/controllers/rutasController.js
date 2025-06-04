@@ -51,6 +51,20 @@ export async function crearRuta(req, res) {
   }
 }
 
+// GET /api/rutas/:id
+export async function obtenerRutaPorId(req, res) {
+  try {
+    const ruta = await Ruta.findById(req.params.id);
+    if (!ruta) {
+      return res.status(404).json({ error: 'Ruta no encontrada' });
+    }
+    res.status(200).json(ruta);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener la ruta' });
+  }
+}
+
+
 // POST /api/rutas/:id/comentarios
 export async function agregarComentario(req, res) {
   try {

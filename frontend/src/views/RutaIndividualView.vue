@@ -11,14 +11,14 @@
 
     <!-- Sección del mapa -->
     <section class="mb-4">
-      <img src="/mapa.png" alt="Mapa de la ruta {{ ruta.nombre }}" class="w-100 rounded shadow-sm" style="max-height: 300px; object-fit: cover;">
+      <img src="/mapa.png" :alt="`Mapa de la ruta ${ruta.nombre}`" class="w-100 rounded shadow-sm" style="max-height: 300px; object-fit: cover;">
     </section>
 
     <!-- Sección de detalles -->
     <section class="mb-4 p-3 bg-light rounded shadow-sm">
       <h2 class="h4 mb-3">Detalles de la ruta</h2>
-      <p><strong>Distancia:</strong> {{ ruta.distancia }} km</p>
-      <p><strong>Duración estimada:</strong> {{ ruta.duracion }}</p>
+      <p><strong>Distancia:</strong> {{ ruta.distanciaKm }} km</p>
+      <p><strong>Duración estimada:</strong> {{ ruta.duracionEstimada }} h</p>
       <p><strong>Dificultad:</strong> {{ ruta.dificultad }}</p>
       <p><strong>Descripción:</strong> {{ ruta.descripcion }}</p>
     </section>
@@ -26,37 +26,40 @@
     <!-- Sección de comentarios -->
     <section>
       <h2 class="h4 mb-3">Comentarios</h2>
-      <article v-for="comentario in comentarios" :key="comentario.id" class="p-3 mb-2 bg-white border rounded shadow-sm">
-        <h3 class="h6 mb-1">{{ comentario.usuario }}</h3>
+      <article v-for="(comentario, index) in ruta.comentarios" :key="index" class="p-3 mb-2 bg-white border rounded shadow-sm">
+        <h3 class="h6 mb-1">Usuario ID: {{ comentario.usuarioId }}</h3>
         <p class="mb-0 text-muted">{{ comentario.texto }}</p>
       </article>
     </section>
   </main>
 </template>
 
-
 <script>
+import axios from 'axios';
+
 export default {
   name: 'RutaIndividualView',
   data() {
     return {
       ruta: {
-        nombre: "Carretera de Mula",
-        ubicacion: "Calasparra, Murcia",
-        distancia: 8.4,
-        duracion: "2 horas 45 min",
-        dificultad: "Media",
-        descripcion: "Una espectacular ruta circular que comienza en el área recreativa de Las Cuevas del Puerto, sube por un sendero de media montaña entre pinares y ofrece vistas panorámicas del valle del Segura."
-      },
-      comentarios: [
-        { id: 1, usuario: "Jenny Wilson", texto: "¡Ruta espectacular!" },
-        { id: 2, usuario: "Darlene Robertson", texto: "Muy recomendable para hacer en familia." }
-      ]
+        nombre: '',
+        ubicacion: '',
+        distanciaKm: 0,
+        duracionEstimada: '',
+        dificultad: '',
+        descripcion: '',
+        comentarios: []
+      }
     };
   },
-  mounted() {
+  async mounted() {
     const rutaId = this.$route.params.id;
-    console.log('Ruta seleccionada ID:', rutaId);
+    try {
+      const res = await axios.get(`http://localhost:3000/api/rutas/${rutaId}`);
+      this.ruta = res.data;
+    } catch (error) {
+      console.error('❌ Error al cargar la ruta:', error);
+    }
   }
 };
 </script>

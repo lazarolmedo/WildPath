@@ -16,13 +16,13 @@
 
       <article 
         v-for="ruta in rutas" 
-        :key="ruta.id" 
+        :key="ruta._id" 
         class="card mb-4 p-3 shadow-sm route-card"
-        @click="verRuta(ruta.id)"
+        @click="verRuta(ruta._id)"
         style="cursor: pointer;"
       >
         <div class="d-flex align-items-center">
-          <img :src="ruta.imagen" alt="Imagen de {{ ruta.nombre }}" class="me-3 rounded" width="100" height="100" style="object-fit: cover;">
+          <img :src="ruta.imagen" :alt="`Imagen de ${ruta.nombre}`" class="me-3 rounded" width="100" height="100" style="object-fit: cover;">
           <div>
             <h3 class="mb-1">{{ ruta.nombre }}</h3>
             <p class="mb-0 text-muted">{{ ruta.ubicacion }}</p>
@@ -37,18 +37,25 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      rutas: [
-        { id: 1, nombre: "Carretera de Mula", ubicacion: "Calasparra, Murcia", imagen: "ruta1.jpg" },
-        { id: 2, nombre: "Darma Reservoir", ubicacion: "Calasparra, Murcia", imagen: "ruta1.jpg" }
-      ]
+      rutas: []
     };
   },
   methods: {
     verRuta(id) {
       this.$router.push(`/ruta/${id}`);
+    }
+  },
+  async created() {
+    try {
+      const res = await axios.get('http://localhost:3000/api/rutas');
+      this.rutas = res.data;
+    } catch (error) {
+      console.error('❌ Error al cargar rutas:', error);
     }
   }
 };
