@@ -1,11 +1,6 @@
 <template>
   <main class="container-fluid p-4">
-    <header class="d-flex justify-content-between align-items-center mb-4">
-      <h1>WildPath</h1>
-      <router-link to="/perfil" aria-label="Ir al perfil">
-        <img src="/user-icon.png" alt="Icono Usuario" width="40" style="cursor: pointer;">
-      </router-link>
-    </header>
+    <!-- Quitamos header con h1 e icono perfil -->
 
     <section class="mb-4">
       <input type="search" class="form-control w-50 mx-auto" placeholder="Buscar rutas o ciudad" aria-label="Buscar rutas o ciudad">
@@ -35,6 +30,7 @@
     </section>
   </main>
 </template>
+
 
 <script>
 import axios from 'axios';

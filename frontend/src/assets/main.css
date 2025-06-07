@@ -1,0 +1,85 @@
+:root {
+  /* Everglade Palette */
+  --everglade-50:  #f3faf5;
+  --everglade-100: #e3f5e9;
+  --everglade-200: #c9e9d5;
+  --everglade-300: #9ed7b4;
+  --everglade-400: #6cbc8a;
+  --everglade-500: #47a06a;
+  --everglade-600: #368353;
+  --everglade-700: #2d6844;
+  --everglade-800: #285339;
+  --everglade-900: #1d3a29;
+  --everglade-950: #0e2518;
+
+  /* Theme variables */
+  --primary-color: var(--everglade-500);
+  --primary-color-dark: var(--everglade-600);
+  --secondary-color: var(--everglade-50);
+  --accent-color: #FF6347;
+  --background-color: var(--everglade-100);
+  --text-color: var(--everglade-900);
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Rubik', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  color: var(--primary-color);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+/* Inputs */
+input.form-control {
+  background-color: #fff;
+  border: 1px solid var(--primary-color);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Botones */
+.btn-outline-primary {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transition: 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+}
+
+/* Sombras */
+.shadow-sm {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Tarjetas base */
+.card {
+  background-color: var(--secondary-color);
+  border: none;
+  border-radius: 0.5rem;
+}

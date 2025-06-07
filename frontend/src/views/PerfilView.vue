@@ -10,7 +10,7 @@
     <!-- Perfil autenticado -->
     <section v-else>
       <header class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Perfil</h1>
+        <h1>Perfil</h1>
         <button class="btn btn-link" @click="modoEdicion = !modoEdicion" aria-label="Editar perfil">
           Editar
         </button>
