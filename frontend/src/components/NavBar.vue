@@ -20,7 +20,7 @@
 
 <style scoped>
 .logo-wildpath {
-  height: 54px;
+  height: 55px;
   width: auto;
   object-fit: contain;
 }
