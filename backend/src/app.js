@@ -5,7 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 import rutasRoutes from './routes/rutas.js';
-
+import usuariosRoutes from './routes/usuarios.js';
 // Cargar variables del .env
 dotenv.config();
 
@@ -24,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Rutas API
 app.use('/api/rutas', rutasRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {

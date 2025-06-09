@@ -25,11 +25,14 @@ wildpath-backend/
 │   ├── app.js               
 │   ├── db.js                
 │   ├── models/
-│   │   └── Ruta.js          
+│   │   ├── Ruta.js
+│   │   └── Usuario.js          
 │   ├── routes/
-│   │   └── rutasRoutes.js   
+│   │   ├── rutasRoutes.js   
+│   │   └── usuariosRoutes.js
 │   └── controllers/
-│       └── rutasController.js 
+│       ├── rutasController.js
+│       └── usuariosController.js
 ├── .env
 ├── .gitignore
 ├── package.json
@@ -62,23 +65,43 @@ Servidor activo en: `http://localhost:3000`
 ## Uris REST disponibles 
 (http://localhost:3000/api/rutas)
 
-### `GET /api/rutas`
-Devuelve un listado completo de todas las rutas.
 
-### `POST /api/rutas`
-Crea una nueva ruta fija.  
-Requiere un JSON con `nombre`, `ubicacion`, `imagen`, `tipo` y `recorrido`.
+### 📍 RUTAS
+Base URL: `http://localhost:3000/api/rutas`
+
+- `GET /api/rutas`  
+  Devuelve un listado completo de todas las rutas.
+
+- `POST /api/rutas`  
+  Crea una nueva ruta fija.  
+  Requiere un JSON con `nombre`, `ubicacion`, `imagen`, `dificultad`, `recorrido`, etc.
+
+- `GET /api/rutas/:id`  
+  Devuelve los datos de una ruta en específico por su ID.
+---
+(http://localhost:3000/api/usuarios)
+
+### 👤 USUARIOS
+Base URL: `http://localhost:3000/api/usuarios`
+
+- `GET /api/usuarios`  
+  Devuelve un listado completo de todos los usuarios.
+
+- `POST /api/usuarios`  
+  Crea un nuevo usuario.  
+  Requiere un JSON con `nombre`, `fotoPerfil`, `rutasCreadas`, `logros`, `estadisticas`.
+
+- `GET /api/usuarios/:id`  
+  Devuelve los datos de un usuario específico por su ID.
+
+---
+---
 
 Consulta la documentación completa en [`backend/docs/api_rest.md`](./docs/apirest.md)
 
 ---
-
-## En desarrollo futuro
-- Relación usuario-rutas
-- Crear ruta usando ubicación en tiempo rea
-- Añadir ams campos en los modelos de rutas y usuario
-- Añadir el apartado de logros en los usuarioas 
 ---
+
 
 ## Autores
 Creado y mantenido por el equipo de desarrollo de WildPath.
