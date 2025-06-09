@@ -1,7 +1,7 @@
 <template>
-  <nav class="navbar my-2 px-3 py-2">
+  <nav class="navbar px-3 ">
     <div class="d-flex align-items-end justify-content-between w-100">
-      <!-- IZQUIERDA: Logo + enlaces -->
+      <!-- Logo + enlaces -->
       <div class="d-flex align-items-end gap-3">
         <router-link to="/" class="d-flex align-items-end text-decoration-none">
           <img src="/logo-wildpath.png" alt="Logo WildPath" class="logo-wildpath" />
@@ -10,7 +10,7 @@
         <router-link to="/grabar" class="nav-link custom-nav-link" active-class="active">Grabar Ruta</router-link>
       </div>
 
-      <!-- DERECHA: Icono perfil -->
+      <!-- Icono perfil -->
       <router-link to="/perfil" class="ms-auto">
         <img src="/user-icon.png" alt="Icono Usuario" width="54" style="cursor: pointer;">
       </router-link>

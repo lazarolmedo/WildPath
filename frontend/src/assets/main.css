@@ -13,11 +13,11 @@
   --everglade-950: #0e2518;
 
   /* Theme variables */
-  --primary-color: var(--everglade-500);
+  --primary-color: var(--everglade-600);
   --primary-color-dark: var(--everglade-600);
   --secondary-color: var(--everglade-50);
   --accent-color: #FF6347;
-  --background-color: var(--everglade-100);
+  --background-color: var(--everglade-50);
   --text-color: var(--everglade-900);
 }
 
