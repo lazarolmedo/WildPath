@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Subdocumento para estadísticas del usuario
 const EstadisticasSchema = new mongoose.Schema({
   distanciaTotal: {
     type: Number,
@@ -19,6 +20,21 @@ const UsuarioSchema = new mongoose.Schema({
   fotoPerfil: {
     type: String
   },
+
+  // Campo obligatorio para guardar el ID del usuario que nos da Google al autenticarse
+  googleId: {
+    type: String,
+    required: true,
+    unique: true // Nos aseguramos de que no se repita
+  },
+
+  // Email proporcionado por Google al autenticarse
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
   rutasCreadas: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,8 +44,10 @@ const UsuarioSchema = new mongoose.Schema({
   logros: [String],
   estadisticas: {
     type: EstadisticasSchema,
-    default: () => ({})
+    default: () => ({}) // Se inicializa con valores por defecto
   }
 });
 
+// Exportamos el modelo para usarlo en controladores y configuración de Passport
 export default mongoose.model('Usuario', UsuarioSchema);
+

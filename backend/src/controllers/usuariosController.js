@@ -32,7 +32,7 @@ export async function crearUsuario(req, res) {
     await nuevoUsuario.save();
     res.status(201).json(nuevoUsuario);
   } catch (error) {
-    console.error('❌ Error al crear el usuario:', error);
+    console.error('Error al crear el usuario:', error);
     res.status(400).json({ error: 'Datos inválidos o error al guardar' });
   }
 }
@@ -49,3 +49,15 @@ export async function obtenerUsuarioPorId(req, res) {
     res.status(500).json({ error: 'Error al obtener el usuario' });
   }
 }
+
+// GET /api/usuarios/yo
+export async function obtenerUsuarioActual(req, res) {
+  // Esta ruta se usa para obtener el usuario que ha iniciado sesión
+  // Passport guarda automáticamente el objeto `req.user` si el usuario está autenticado con Google
+  if (!req.user) {
+    return res.status(401).json({ error: 'No autenticado' }); // Si no hay sesión activa, devolvemos 401
+  }
+
+  res.json(req.user); // Si está autenticado, respondemos con los datos del usuario
+}
+
