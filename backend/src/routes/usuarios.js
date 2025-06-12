@@ -3,7 +3,8 @@ import {
   listarUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
-  obtenerUsuarioActual
+  obtenerUsuarioActual,
+  actualizarNombreUsuario
 } from '../controllers/usuariosController.js';
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.get('/:id', obtenerUsuarioPorId);
 
 // Ruta para crear un nuevo usuario manualmente (no se usa con Google, pero útil para otros casos)
 router.post('/', crearUsuario);
+
+router.patch('/yo', actualizarNombreUsuario); 
+
 
 export default router;
 

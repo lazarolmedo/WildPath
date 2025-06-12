@@ -10,13 +10,40 @@
         <router-link to="/grabar" class="nav-link custom-nav-link" active-class="active">Grabar Ruta</router-link>
       </div>
 
-      <!-- Icono perfil -->
+      <!-- Icono perfil dinámico -->
       <router-link to="/perfil" class="ms-auto">
-        <img src="/user-icon.png" alt="Icono Usuario" width="54" style="cursor: pointer;">
+        <img :src="logueado ? '/user-icon-logueado.png' : '/user-icon.png'" alt="Icono Usuario" width="54" style="cursor: pointer;">
       </router-link>
     </div>
   </nav>
 </template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      logueado: false
+    };
+  },
+  mounted() {
+    this.checkSesion();
+  },
+  methods: {
+    async checkSesion() {
+      try {
+        await axios.get('http://localhost:3000/api/usuarios/yo', {
+          withCredentials: true
+        });
+        this.logueado = true;
+      } catch (error) {
+        this.logueado = false;
+      }
+    }
+  }
+};
+</script>
 
 <style scoped>
 .logo-wildpath {

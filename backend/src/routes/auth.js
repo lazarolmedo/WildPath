@@ -22,15 +22,14 @@ router.get('/google/callback', passport.authenticate('google', {
 });
 
 // Ruta para cerrar sesión
+// routes/auth.js
 router.get('/logout', (req, res) => {
-  // Passport elimina la sesión del usuario
   req.logout(() => {
-    // Borramos manualmente la cookie de sesión
     res.clearCookie('connect.sid');
-    // Redirigimos al usuario a la página de inicio del frontend
-    res.redirect('http://localhost:5173');
+    res.status(200).json({ mensaje: 'Sesión cerrada correctamente' });
   });
 });
+
 
 export default router;
 

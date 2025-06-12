@@ -61,3 +61,28 @@ export async function obtenerUsuarioActual(req, res) {
   res.json(req.user); // Si está autenticado, respondemos con los datos del usuario
 }
 
+// PATCH /api/usuarios/yo
+export async function actualizarNombreUsuario(req, res) {
+  if (!req.user) return res.status(401).json({ error: 'No autenticado' });
+
+  try {
+    const { nombre } = req.body;
+
+    // Validar nombre (evita valores vacíos o incorrectos)
+    if (!nombre || typeof nombre !== 'string') {
+      return res.status(400).json({ error: 'Nombre inválido' });
+    }
+
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      req.user._id,
+      { nombre },
+      { new: true }
+    );
+
+    res.status(200).json(usuarioActualizado);
+  } catch (error) {
+    console.error('Error al actualizar el nombre:', error);
+    res.status(500).json({ error: 'Error al actualizar el nombre' });
+  }
+}
+
