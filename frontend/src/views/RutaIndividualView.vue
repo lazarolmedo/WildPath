@@ -13,33 +13,11 @@
 
     <!-- NUEVO: Mapa interactivo con botones de modo de viaje -->
     <section class="mb-5">
-      <!-- Botones -->
-      <div class="mb-3">
-        <div class="btn-group" role="group">
-          <button
-            type="button"
-            class="btn"
-            :class="modoViaje === 'WALK' ? 'btn-primary active' : 'btn-outline-primary'"
-            @click="cambiarModo('WALK')"
-          >
-            🚶 A pie
-          </button>
-          <button
-            type="button"
-            class="btn"
-            :class="modoViaje === 'BICYCLE' ? 'btn-primary active' : 'btn-outline-primary'"
-            @click="cambiarModo('BICYCLE')"
-          >
-            🚴 En bici
-          </button>
-        </div>
-      </div>
-
       <!-- NUEVO: Div para mapa dinámico -->
       <div ref="mapa" class="w-100 rounded shadow-sm" style="height: 400px; border-radius: 0.75rem;"></div>
     </section>
 
-    <!-- Detalles de la ruta (sin cambios) -->
+
     <section class="mb-5 p-4 bg-white border rounded shadow-sm">
       <h2 class="h5 text-success mb-3">Detalles de la ruta</h2>
       <p><i class="bi bi-signpost me-2 text-success"></i><strong>Distancia:</strong> {{ ruta.distanciaKm }} km</p>
@@ -47,6 +25,7 @@
       <p><i class="bi bi-bar-chart-line me-2 text-success"></i><strong>Dificultad:</strong> {{ ruta.dificultad }}</p>
       <p><i class="bi bi-arrow-up me-2 text-success"></i><strong>Altitud:</strong> {{ ruta.altitud }} m</p>
       <p><i class="bi bi-info-circle me-2 text-success"></i><strong>Descripción:</strong> {{ ruta.descripcion }}</p>
+      <p><i class="bi bi-geo-alt me-2 text-success"></i><strong>Modo de viaje:</strong> {{ tipoRuta  }}</p>
     </section>
 
     <!-- Comentarios -->
@@ -104,14 +83,13 @@ export default {
         altitud: 0,
         descripcion: '',
         comentarios: [],
-        recorrido: [] // NUEVO
+        recorrido: [] 
       },
       nuevoComentario: '',
-      modoViaje: 'WALK', // NUEVO
-      mapa: null,         // NUEVO
-      rutaDibujada: null, // NUEVO
+      modoViaje: '',
+      rutaDibujada: null,
       marcadorInicio: null, // MEJORA: evitar acumulación
-      marcadorFin: null     // MEJORA
+      marcadorFin: null     
     };
   },
   methods: {
@@ -128,6 +106,7 @@ export default {
       try {
         const res = await axios.get(`http://localhost:3000/api/rutas/${rutaId}`);
         this.ruta = res.data;
+        this.modoViaje = this.ruta.travelMode || 'walking';
         this.$nextTick(() => {
           if (
             window.google &&
@@ -149,67 +128,80 @@ export default {
         if (puntos.length >= 2) this.trazarRuta(puntos[0], puntos[puntos.length - 1]);
       }
     },
+    modoViajeMaps() {
+      switch (this.ruta.travelMode) {
+        case 'walking':
+          return 'WALK';
+        case 'bicycling':
+          return 'BICYCLE';
+        default:
+          return 'WALK'; // valor por defecto 
+      }
+   },
     initMap() {
       const puntos = this.ruta.recorrido.map(p => ({ lat: +p.lat, lng: +p.lng }));
       if (puntos.length < 2) return;
       this.mapa = new google.maps.Map(this.$refs.mapa, {
         center: puntos[0],
         zoom: 14,
-        streetViewControl: false, //quitamr la vista 3D (muñeco amarillo)
+        mapTypeId: 'satellite', // cambiar a satélite
+        
+        streetViewControl: false, // quitar la vista 3D (muñeco amarillo)
+        mapTypeControl: false, // quitar el control de tipo de mapa
       });
       this.trazarRuta(puntos[0], puntos[puntos.length - 1]);
     },
     async trazarRuta(origen, destino) {
-  const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  if (!API_KEY) return console.error('Falta la API KEY');
+    const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    if (!API_KEY) return console.error('Falta la API KEY');
 
-  const body = {
-    origin: { location: { latLng: { latitude: origen.lat, longitude: origen.lng } } },
-    destination: { location: { latLng: { latitude: destino.lat, longitude: destino.lng } } },
-    travelMode: this.modoViaje
-  };
+    const body = {
+      origin: { location: { latLng: { latitude: origen.lat, longitude: origen.lng } } },
+      destination: { location: { latLng: { latitude: destino.lat, longitude: destino.lng } } },
+      travelMode: this.modoViajeMaps()
+    };
 
-  try { 
-    // Usar axios para llamar a la API de Google Maps Directions
-    const res = await axios.post(
-      `https://routes.googleapis.com/directions/v2:computeRoutes?key=${API_KEY}`,
-      body,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
+    try {
+      // Usar axios para llamar a la API de Google Maps Directions
+      const res = await axios.post(
+        `https://routes.googleapis.com/directions/v2:computeRoutes?key=${API_KEY}`,
+        body,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
+          }
         }
-      }
-    );
-    // Verificar si la respuesta contiene la ruta
-    const encoded = res?.data?.routes?.[0]?.polyline?.encodedPolyline;
-    if (!encoded) return console.warn('No se pudo generar la ruta');
+      );
+      // Verificar si la respuesta contiene la ruta
+      const encoded = res?.data?.routes?.[0]?.polyline?.encodedPolyline;
+      if (!encoded) return console.warn('No se pudo generar la ruta');
 
-    const decoded = this.decodePolyline(encoded);
-    if (this.rutaDibujada) this.rutaDibujada.setMap(null);
+      const decoded = this.decodePolyline(encoded);
+      if (this.rutaDibujada) this.rutaDibujada.setMap(null);
 
-    this.rutaDibujada = new google.maps.Polyline({
-      path: decoded,
-      map: this.mapa,
-      strokeColor: '#1a73e8',
-      strokeOpacity: 0.9,
-      strokeWeight: 5
-    });
+      this.rutaDibujada = new google.maps.Polyline({
+        path: decoded,
+        map: this.mapa,
+        strokeColor: '#1a73e8',
+        strokeOpacity: 0.9,
+        strokeWeight: 5
+      });
 
-    // Limpiar marcadores anteriores
-    if (this.marcadorInicio) this.marcadorInicio.setMap(null);
-    if (this.marcadorFin) this.marcadorFin.setMap(null);
+      // Limpiar marcadores anteriores
+      if (this.marcadorInicio) this.marcadorInicio.setMap(null);
+      if (this.marcadorFin) this.marcadorFin.setMap(null);
 
-    this.marcadorInicio = new google.maps.Marker({ position: origen, map: this.mapa, label: 'A' });
-    this.marcadorFin = new google.maps.Marker({ position: destino, map: this.mapa, label: 'B' });
+      this.marcadorInicio = new google.maps.Marker({ position: origen, map: this.mapa, label: 'A' });
+      this.marcadorFin = new google.maps.Marker({ position: destino, map: this.mapa, label: 'B' });
 
-    const bounds = new google.maps.LatLngBounds();
-    decoded.forEach(p => bounds.extend(p));
-    this.mapa.fitBounds(bounds);
-  } catch (err) {
-    console.error('Error trazando ruta con axios:', err);
-  }
-},
+      const bounds = new google.maps.LatLngBounds();
+      decoded.forEach(p => bounds.extend(p));
+      this.mapa.fitBounds(bounds);
+    } catch (err) {
+      console.error('Error trazando ruta con axios:', err);
+    }
+    },
 
     decodePolyline(encoded) {
       let points = [], index = 0, lat = 0, lng = 0;
@@ -234,6 +226,11 @@ export default {
         points.push({ lat: lat / 1e5, lng: lng / 1e5 });
       }
       return points;
+    }
+  },
+  computed: {
+    tipoRuta() {
+      return this.ruta.travelMode === 'walking'? 'Senderismo': 'Ciclismo'; 
     }
   },
   mounted() {
