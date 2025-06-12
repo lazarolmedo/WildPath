@@ -154,7 +154,8 @@ export default {
       if (puntos.length < 2) return;
       this.mapa = new google.maps.Map(this.$refs.mapa, {
         center: puntos[0],
-        zoom: 14
+        zoom: 14,
+        streetViewControl: false, //quitamr la vista 3D (muñeco amarillo)
       });
       this.trazarRuta(puntos[0], puntos[puntos.length - 1]);
     },
