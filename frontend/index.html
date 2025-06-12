@@ -5,6 +5,21 @@
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite App</title>
+    <!-- Google Maps API con tu clave -->
+     <script
+        async
+        defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDf8vfSGw84tiybFD7ngkKav-m4kNeIVXw&callback=initMap"
+      ></script>
+
+   
+      <script>
+        function initMap() {
+        console.log("Google Maps cargado.");
+        // No es necesario hacer nada aquí, Vue lo usa desde el componente
+        }
+      </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
