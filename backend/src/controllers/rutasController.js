@@ -21,6 +21,7 @@ export async function crearRuta(req, res) {
       dificultad,
       distanciaKm,
       duracionEstimada,
+      travelMode,
       altitud,
       recorrido,
       comentarios // opcional
@@ -38,6 +39,7 @@ export async function crearRuta(req, res) {
       dificultad,
       distanciaKm,
       duracionEstimada,
+      travelMode, 
       altitud,
       recorrido,
       comentarios: comentarios || []

@@ -27,6 +27,11 @@ const RutaSchema = new mongoose.Schema({
   },
   distanciaKm: Number,
   duracionEstimada: Number,
+  travelMode: {
+    type: String,
+    enum: ['walking', 'biking'],
+    default: 'walking'
+  },
   altitud: Number,
   recorrido: [
     {
