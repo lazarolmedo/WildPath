@@ -9,11 +9,9 @@ Sirve como una API REST para crear, consultar y gestionar rutas almacenadas en l
 
 - Node.js
 - Express.js
-- MongoDB Atlas
-- Mongoose
-- dotenv
-- ES Modules (import/export)
-- Nodemon (dev)
+- MongoDB Atlas + Mongoose
+- Autenticación con **Passport.js** y **OAuth2 de Google**
+- Configuración segura mediante **dotenv**
 
 ---
 
@@ -23,16 +21,19 @@ Sirve como una API REST para crear, consultar y gestionar rutas almacenadas en l
 wildpath-backend/
 ├── src/
 │   ├── app.js               
-│   ├── db.js                
+│   ├── config/
+│   │   └── passport.js    
+│   ├── controllers/
+│   │   ├── rutasController.js     
+│   │   └── usuariosController.js  
 │   ├── models/
-│   │   ├── Ruta.js
-│   │   └── Usuario.js          
-│   ├── routes/
-│   │   ├── rutasRoutes.js   
-│   │   └── usuariosRoutes.js
-│   └── controllers/
-│       ├── rutasController.js
-│       └── usuariosController.js
+│   │   ├── Ruta.js        
+│   │   └── Usuario.js    
+│   └── routes/
+│       ├── auth.js      
+│       ├── rutas.js      
+│       └── usuarios.js    
+│
 ├── .env
 ├── .gitignore
 ├── package.json
@@ -47,10 +48,15 @@ wildpath-backend/
 npm install
 ```
 
-3. Crea el archivo `.env`:
+3. Crea el archivo `.env` en la raíz del proyecto con el siguiente contenido:
 ```
-PORT=3000
-MONGO_URI=tu_url_de_conexion_a_mongo_atlas
+    PORT=3000
+    MONGODB_URI=tu_url_de_conexion_a_mongo
+    GOOGLE_CLIENT_ID=tu_client_id_de_google
+    GOOGLE_CLIENT_SECRET=tu_secreto_de_google
+    GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+    VITE_GOOGLE_MAPS_API_KEY=tu_clave_de_maps
+
 ```
 
 4. Inicia el servidor:
@@ -66,22 +72,22 @@ Servidor activo en: `http://localhost:3000`
 (http://localhost:3000/api/rutas)
 
 
-### 📍 RUTAS
+### RUTAS
 Base URL: `http://localhost:3000/api/rutas`
 
 - `GET /api/rutas`  
   Devuelve un listado completo de todas las rutas.
 
 - `POST /api/rutas`  
-  Crea una nueva ruta fija.  
-  Requiere un JSON con `nombre`, `ubicacion`, `imagen`, `dificultad`, `recorrido`, etc.
-
+  Crea una nueva ruta fija. 
 - `GET /api/rutas/:id`  
   Devuelve los datos de una ruta en específico por su ID.
+- `POST /api/rutas/:id/comentarios`
+  Añade un comentario a una ruta individual
 ---
 (http://localhost:3000/api/usuarios)
 
-### 👤 USUARIOS
+### USUARIOS
 Base URL: `http://localhost:3000/api/usuarios`
 
 - `GET /api/usuarios`  
@@ -93,8 +99,7 @@ Base URL: `http://localhost:3000/api/usuarios`
 
 - `GET /api/usuarios/:id`  
   Devuelve los datos de un usuario específico por su ID.
-
----
+  
 ---
 
 Consulta la documentación completa en [`backend/docs/api_rest.md`](./docs/apirest.md)
