@@ -50,16 +50,47 @@ export async function obtenerUsuarioPorId(req, res) {
   }
 }
 
-// GET /api/usuarios/yo
+// GET /auth/yo
 export async function obtenerUsuarioActual(req, res) {
-  // Esta ruta se usa para obtener el usuario que ha iniciado sesión
-  // Passport guarda automáticamente el objeto `req.user` si el usuario está autenticado con Google
   if (!req.user) {
-    return res.status(401).json({ error: 'No autenticado' }); // Si no hay sesión activa, devolvemos 401
+    return res.status(401).json({ error: 'No autenticado' });
   }
 
-  res.json(req.user); // Si está autenticado, respondemos con los datos del usuario
+  try {
+    // Obtener el usuario con sus rutas creadas
+    const usuario = await Usuario.findById(req.user._id)
+      .populate('rutasCreadas')
+      .lean();
+
+    const rutas = usuario.rutasCreadas || [];
+
+    // Calcular estadísticas
+    const distanciaTotal = rutas.reduce((suma, ruta) => suma + (ruta.distanciaKm || 0), 0);
+    const rutasCompletadas = rutas.length;
+
+    // Calcular logros
+    const logros = [];
+    if (rutasCompletadas >= 1) logros.push('explorador');
+    if (distanciaTotal >= 20) logros.push('veterano');
+    if (rutasCompletadas >= 5) logros.push('legendario');
+
+    // Actualizar usuario en la base de datos
+    await Usuario.findByIdAndUpdate(req.user._id, {
+      estadisticas: { distanciaTotal, rutasCompletadas },
+      logros
+    });
+
+    // Añadir al objeto de respuesta
+    usuario.estadisticas = { distanciaTotal, rutasCompletadas };
+    usuario.logros = logros;
+
+    res.status(200).json(usuario);
+  } catch (err) {
+    console.error('Error al obtener usuario:', err);
+    res.status(500).json({ error: 'Error al obtener el usuario' });
+  }
 }
+
 
 // PATCH /api/usuarios/yo
 export async function actualizarNombreUsuario(req, res) {

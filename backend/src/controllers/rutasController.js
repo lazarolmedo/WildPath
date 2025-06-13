@@ -13,6 +13,11 @@ export async function listarRutas(req, res) {
 // POST /api/rutas
 export async function crearRuta(req, res) {
   try {
+    // Asegúrate de que el usuario está autenticado
+    if (!req.user) {
+      return res.status(401).json({ error: 'No autenticado' });
+    }
+
     const {
       nombre,
       ubicacion,
@@ -31,6 +36,7 @@ export async function crearRuta(req, res) {
       return res.status(400).json({ error: 'El recorrido debe tener al menos dos puntos' });
     }
 
+    // Crear la ruta
     const nuevaRuta = new Ruta({
       nombre,
       ubicacion,
@@ -39,16 +45,22 @@ export async function crearRuta(req, res) {
       dificultad,
       distanciaKm,
       duracionEstimada,
-      travelMode, 
+      travelMode,
       altitud,
       recorrido,
       comentarios: comentarios || []
     });
 
     await nuevaRuta.save();
+
+    // Asociarla al usuario creador
+    await Usuario.findByIdAndUpdate(req.user._id, {
+      $push: { rutasCreadas: nuevaRuta._id }
+    });
+
     res.status(201).json(nuevaRuta);
   } catch (error) {
-    console.error('❌ Error al crear la ruta:', error);
+    console.error('Error al crear la ruta:', error);
     res.status(500).json({ error: 'Error al crear la ruta' });
   }
 }

@@ -2,9 +2,13 @@
   <main class="container-fluid p-4">
     <!-- Encabezado superior -->
     <header class="d-flex align-items-center mb-4">
-      <router-link to="/" class="btn btn-outline-success rounded-pill px-3">
+      <router-link
+        :to="$route.query.from === 'perfil' ? '/perfil' : '/'"
+        class="btn btn-outline-success rounded-pill px-3"
+      >
         <i class="bi bi-arrow-left"></i>
       </router-link>
+
       <div class="ms-3">
         <h1 class="mb-0 text-success">{{ ruta.nombre }}</h1>
         <p class="text-muted mb-0">{{ ruta.ubicacion }}</p>

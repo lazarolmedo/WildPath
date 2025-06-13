@@ -12,16 +12,13 @@
 
     <!-- Vista cuando el usuario ya ha iniciado sesión -->
     <section v-else>
+      <!-- Card de perfil -->
       <div class="card mx-auto shadow-sm bg-white" style="max-width: 600px; border: 1px solid #e0e0e0;">
         <div class="card-body text-center">
-          <!-- Imagen de perfil grande -->
           <img src="/user-icon-logueado.png" alt="Icono de perfil" width="140" class="mb-3 rounded-circle border border-3 shadow-sm">
-          
-          <!-- Nombre y correo -->
           <h2 class="h4 mb-0">{{ usuario.nombre }}</h2>
           <p class="text-muted mb-3">{{ usuario.email }}</p>
 
-          <!-- Botones -->
           <div class="d-flex justify-content-center gap-3 mb-3">
             <button class="btn btn-outline-primary" @click="modoEdicion = !modoEdicion">
               <i class="bi bi-pencil-square me-1"></i>Editar
@@ -50,9 +47,9 @@
           <div class="mb-4">
             <h5 class="text-start">Logros</h5>
             <div class="d-flex justify-content-center align-items-center gap-3">
-              <img src="/user-icon.png" alt="Logro 1" width="40">
-              <img src="/user-icon.png" alt="Logro 2" width="40">
-              <img src="/user-icon.png" alt="Logro 3" width="40">
+              <img v-if="usuario.logros.includes('explorador')" src="/logros/explorador.svg" alt="Explorador" width="40">
+              <img v-if="usuario.logros.includes('veterano')" src="/logros/veterano.svg" alt="Veterano" width="40">
+              <img v-if="usuario.logros.includes('legendario')" src="/logros/legendario.svg" alt="Legendario" width="40">
             </div>
           </div>
 
@@ -72,6 +69,39 @@
           </transition>
         </div>
       </div>
+
+      <!-- Rutas creadas -->
+      <div class="mt-5">
+        <hr class="my-5" />
+        <h3 class="mb-4">Rutas creadas</h3>
+
+        <div v-if="usuario.rutasCreadas.length" class="row">
+          <div v-for="ruta in usuario.rutasCreadas" :key="ruta._id" class="col-12 col-md-6 mb-4">
+            <article
+              class="card p-3 shadow-sm route-card h-100"
+              @click="$router.push({ path: `/ruta/${ruta._id}`, query: { from: 'perfil' } })"
+              style="cursor: pointer;"
+            >
+              <div class="d-flex align-items-center">
+                <img
+                  :src="ruta.imagen"
+                  :alt="`Imagen de ${ruta.nombre}`"
+                  class="me-3 rounded"
+                  width="100"
+                  height="100"
+                  style="object-fit: cover;"
+                />
+                <div>
+                  <h3 class="mb-1">{{ ruta.nombre }}</h3>
+                  <p class="mb-0 text-muted">{{ ruta.ubicacion }}</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <p v-else class="text-muted text-center">Aún no has creado ninguna ruta.</p>
+      </div>
     </section>
   </main>
 </template>
@@ -87,7 +117,8 @@ export default {
       usuario: {
         nombre: '',
         email: '',
-        estadisticas: {}
+        estadisticas: {},
+        rutasCreadas: []
       }
     };
   },
@@ -122,7 +153,7 @@ export default {
         await axios.get('http://localhost:3000/auth/logout', {
           withCredentials: true
         });
-        window.location.href = '/perfil'; // Forzar recarga
+        window.location.href = '/perfil';
       } catch (err) {
         console.error('Error al cerrar sesión', err);
       }
@@ -137,5 +168,8 @@ export default {
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+.route-card:hover {
+  background-color: var(--everglade-200);
 }
 </style>
