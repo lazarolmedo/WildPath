@@ -73,12 +73,13 @@ export async function obtenerRutaPorId(req, res) {
 // POST /api/rutas/:id/comentarios
 export async function agregarComentario(req, res) {
   try {
-    const { id } = req.params;
-    const { usuarioId, texto, valoracion, fecha } = req.body;
-
-    if (!usuarioId || !texto) {
-      return res.status(400).json({ error: 'usuarioId y texto son obligatorios' });
+    if (!req.user || !req.body.texto) {
+      return res.status(400).json({ error: 'Usuario no autenticado o texto faltante' });
     }
+
+    const { id } = req.params; // ← aquí estaba el error
+    const usuarioId = req.user._id;
+    const { texto } = req.body;
 
     const ruta = await Ruta.findById(id);
     if (!ruta) {
@@ -88,7 +89,7 @@ export async function agregarComentario(req, res) {
     const nuevoComentario = {
       usuarioId,
       texto,
-      fecha: fecha ? new Date(fecha) : new Date()
+      fecha: new Date()
     };
 
     ruta.comentarios.push(nuevoComentario);
@@ -100,3 +101,4 @@ export async function agregarComentario(req, res) {
     res.status(500).json({ error: 'Error al añadir el comentario' });
   }
 }
+

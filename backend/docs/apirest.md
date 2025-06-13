@@ -86,50 +86,6 @@ http://localhost:3000
 }
 ```
 
----
-
-## Rutas de Autenticación (`/auth/...`)
-
-Estas rutas gestionan la autenticación del usuario mediante Google. Aunque técnicamente son HTTP y REST, se documentan por separado por su funcionalidad específica.
-
-### GET /auth/google
-
-Inicia el proceso de autenticación con Google. Redirige al usuario a la pantalla de login de Google.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección a Google
-
----
-
-### GET /auth/google/callback
-
-Ruta de callback que Google utiliza tras la autenticación. Si es exitosa, crea o identifica al usuario en la base de datos y establece una sesión con cookie.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección al frontend (`/perfil`)
-
----
-
-### GET /auth/logout
-
-Cierra la sesión del usuario y elimina la cookie de autenticación.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección al inicio del frontend
-
----
-
-### GET /api/usuarios/yo (provisional, se puede mover a `/auth/yo`)
-
-Devuelve el usuario actualmente autenticado mediante sesión.
-
-- **Método**: `GET`
-- **Respuesta**:
-  - `200 OK` con los datos del usuario si hay sesión
-  - `401 Unauthorized` si no hay sesión activa
-
----
-
 ## Uris
 
 ## Rutas
@@ -361,3 +317,35 @@ Devuelve los datos de un usuario específico por su ID.
   "texto": "Una ruta muy bien señalizada"
 }
 ```
+---
+
+## Rutas de Autenticación (`/auth/...`)
+
+Estas rutas gestionan la autenticación del usuario mediante Google. Aunque técnicamente son HTTP y REST, se documentan por separado por su funcionalidad específica.
+
+### GET /auth/google
+
+Inicia el proceso de autenticación con Google. Redirige al usuario a la pantalla de login de Google.
+
+- **Método**: `GET`
+- **Respuesta esperada**: Redirección a Google
+
+---
+
+### GET /auth/google/callback
+
+Ruta de callback que Google utiliza tras la autenticación. Si es exitosa, crea o identifica al usuario en la base de datos y establece una sesión con cookie.
+
+- **Método**: `GET`
+- **Respuesta esperada**: Redirección al frontend (`/perfil`)
+
+---
+
+### GET /auth/logout
+
+Cierra la sesión del usuario y elimina la cookie de autenticación.
+
+- **Método**: `GET`
+- **Respuesta esperada**: Redirección al inicio del frontend
+
+---
