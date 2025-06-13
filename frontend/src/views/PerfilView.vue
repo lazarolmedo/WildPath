@@ -143,7 +143,6 @@ export default {
           withCredentials: true
         });
         this.modoEdicion = false;
-        alert("Cambios guardados");
       } catch (error) {
         alert("Hubo un error al guardar los cambios");
       }
