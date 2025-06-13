@@ -33,7 +33,7 @@ export default {
   methods: {
     async checkSesion() {
       try {
-        await axios.get('http://localhost:3000/api/usuarios/yo', {
+        await axios.get('http://localhost:3000/auth/yo', {
           withCredentials: true
         });
         this.logueado = true;

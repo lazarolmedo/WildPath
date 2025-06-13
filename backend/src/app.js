@@ -15,6 +15,9 @@ import './config/passport.js';             // Archivo donde configuramos Passpor
 import authRoutes from './routes/auth.js'; // Rutas relacionadas con login con Google
 import rutasRoutes from './routes/rutas.js';
 import usuariosRoutes from './routes/usuarios.js';
+import authUserRoutes from './routes/authUser.js';
+
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +54,7 @@ app.use(passport.session()); // Esto vincula la sesión con Passport para que pu
 app.use('/api/rutas', rutasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/auth', authRoutes); // Ruta que contiene la lógica para iniciar sesión con Google
+app.use('/auth', authUserRoutes);  
 
 // Arranque del servidor
 app.listen(PORT, () => {

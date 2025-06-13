@@ -97,7 +97,7 @@ export default {
   methods: {
     async checkSesion() {
       try {
-        const res = await axios.get('http://localhost:3000/api/usuarios/yo', {
+        const res = await axios.get('http://localhost:3000/auth/yo', {
           withCredentials: true
         });
         this.usuario = res.data;
@@ -108,7 +108,7 @@ export default {
     },
     async guardarCambios() {
       try {
-        await axios.patch('http://localhost:3000/api/usuarios/yo', { nombre: this.usuario.nombre }, {
+        await axios.patch('http://localhost:3000/auth/yo', { nombre: this.usuario.nombre }, {
           withCredentials: true
         });
         this.modoEdicion = false;
