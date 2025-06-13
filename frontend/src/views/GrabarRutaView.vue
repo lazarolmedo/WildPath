@@ -29,6 +29,7 @@
 
     <!-- Formulario para guardar la ruta (arriba del mapa) -->
     <section v-if="mostrarFormulario" class="mb-4 p-4 bg-light rounded shadow">
+      <h2 class="h4 mb-3">Guardar ruta</h2>
       <form @submit.prevent="guardarRuta">
         <div class="mb-3">
           <label for="nombre" class="form-label">Nombre de la ruta</label>
