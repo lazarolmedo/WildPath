@@ -1,3 +1,4 @@
+
 # WildPath Backend  
 
 ## URL base
@@ -19,7 +20,6 @@ http://localhost:3000
 
 * Los usuarios representan a los participantes de la plataforma WildPath.
 * 
-
 * Se almacenan en la colección usuarios de MongoDB Atlas.
 
 ### RUTAS
@@ -166,7 +166,7 @@ Devuelve los datos de una ruta en específico por su ID.
 
 * **Respuestas**:
 
-  * `200 Created` -  Ruta encontrado
+  * `200 Created` -  Ruta encontrada
   * `404 Not Found` - Ruta no encontrada
   * `500 Internal Server Error` - Error del servidor
 
@@ -193,163 +193,59 @@ Añade un nuevo comentario a una ruta ya existente.
 
 * **Respuestas**:
 
-  * `201 Created` - Ruta creada exitosamente  
-    * Cabecera `Location`: URL del nuevo recurso (ej. `/api/rutas/{id}`)  
-    * Cuerpo: objeto JSON de la ruta creada
+  * `201 Created` - Comentario añadido exitosamente  
   * `400 Bad Request` - Datos incompletos o inválidos
   * `404 Not Found` - Ruta no encontrada
   * `500 Internal Server Error` - Error del servidor
 
 ---
 
-## Rutas
+### PATCH /api/rutas/:id
 
-### GET /api/usuarios
+Actualiza el nombre de una ruta existente.
 
-  Devuelve un listado completo de todos los usuarios.
-
-  * **Método**: `GET`
-  * **Headers requeridos**: ninguno
-  * **Parámetros**: ninguno
-  * **Cuerpo**: no requerido
-  * **Respuestas**:
-
-    * `200 OK` - Lista de rutas
-    * `500 Internal Server Error`
-
----
-
-### POST /api/usuarios
-
-* Crea un nuevo usuario en la base de datos
-
-* **Método**: `POST`
+* **Método**: `PATCH`
 
 * **Headers requeridos**:
 
   * `Content-Type: application/json`
+  * Requiere autenticación
+
+* **Parámetros**:  
+  `id (ID de la ruta a modificar)`
 
 * **Cuerpo requerido (ejemplo)**:
 
 ```json
-  {
-    "nombre": "Laura Senderista",
-    "fotoPerfil": "laura.jpg",
-    "googleId": "103829102938102938192", 
-    "email": "laura@example.com",
-    "rutasCreadas": [],
-    "logros": ["Explorador"],
-    "estadisticas": {
-      "distanciaTotal": 0,
-      "rutasCompletadas": 0
-    }
-  }
+{
+  "nombre": "Nuevo nombre para la ruta"
+}
 ```
-
 * **Respuestas**:
 
-  * `201 Created` - Usuario creado exitosamente  
-    * Cabecera `Location`: URL del nuevo recurso (ej. `/api/usuarios/{id}`)  
-    * Cuerpo: objeto JSON del usuario creado
-  * `400 Bad Request` - Faltan campos o datos inválidos
-  * `500 Internal Server Error` - Fallo al guardar
+  * `200 OK` - Ruta actualizada correctamente  
+  * `400 Bad Request` - Nombre inválido o ausente
+  * `404 Not Found` - Ruta no encontrada
+  * `500 Internal Server Error` - Error al actualizar
 
 ---
 
-### GET /api/usuarios/:id
-
-Devuelve los datos de un usuario específico por su ID.
-
-* **Método**: `POST`
+### DELETE /api/rutas/:id
+Elimina una ruta específica. Solo el creador de la ruta puede eliminarla. ya que se realiza desde su perfil 
+* **Método**: `DELETE`
 
 * **Headers requeridos**:
 
   * `Content-Type: application/json`
 
-* **Parámetros**: 
-  `id (ID del usuario)`
-* **Cuerpo requerido (ejemplo)**: Ninguno
-
+* **Parámetros**:  
+  `id (ID de la ruta a eliminar)`
+* **Cuerpo requerido**: Ninguno
 * **Respuestas**:
-
-  * `200 Created` -  Usuario encontrado
-  * `404 Not Found` - Usuario no encontrada
-  * `500 Internal Server Error` - Error del servidor
-
----
-
-## Ejemplos rápidos
-
-### Subir una ruta (`POST`)
-
-**URL**: `http://localhost:3000/api/rutas`
-
-**Body (JSON)**:
-
-```json
-{
-  "nombre": "Ruta Test",
-  "ubicacion": "Granada",
-  "imagen": "granada.jpg",
-  "descripcion": "Ruta de prueba",
-  "dificultad": "media",
-  "distanciaKm": 6.3,
-  "duracionEstimada": 2.5,
-  "altitud": 410,
-  "recorrido": [
-    { "lat": 37.18, "lng": -3.60 },
-    { "lat": 37.20, "lng": -3.61 }
-  ]
-}
-```
-
-### Ver rutas (`GET`)
-
-**URL**: `http://localhost:3000/api/rutas`
-
-(No requiere cuerpo)
-
-### Añadir un comentario (`POST`)
-
-**URL**: `http://localhost:3000/api/rutas/665f5b3fe3ad72a5d9a239d1/comentarios`
-
-**Body (JSON)**:
-
-```json
-{
-  "usuarioId": "665a3dbecc5423fa98384a67",
-  "texto": "Una ruta muy bien señalizada"
-}
-```
----
-
-## Rutas de Autenticación (`/auth/...`)
-
-Estas rutas gestionan la autenticación del usuario mediante Google. Aunque técnicamente son HTTP y REST, se documentan por separado por su funcionalidad específica.
-
-### GET /auth/google
-
-Inicia el proceso de autenticación con Google. Redirige al usuario a la pantalla de login de Google.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección a Google
-
----
-
-### GET /auth/google/callback
-
-Ruta de callback que Google utiliza tras la autenticación. Si es exitosa, crea o identifica al usuario en la base de datos y establece una sesión con cookie.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección al frontend (`/perfil`)
-
----
-
-### GET /auth/logout
-
-Cierra la sesión del usuario y elimina la cookie de autenticación.
-
-- **Método**: `GET`
-- **Respuesta esperada**: Redirección al inicio del frontend
+  * `200 OK` - Ruta eliminada exitosamente  
+  * `401 Unauthorized` - No autenticado
+  * `403 Forbidden` - No autorizado
+  * `404 Not Found` - Ruta no encontrada
+  * `500 Internal Server Error` - Error interno
 
 ---

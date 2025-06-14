@@ -1,4 +1,5 @@
 import Ruta from '../models/Ruta.js';
+import Usuario from '../models/Usuario.js';
 
 // GET /api/rutas
 export async function listarRutas(req, res) {
@@ -114,3 +115,65 @@ export async function agregarComentario(req, res) {
   }
 }
 
+// PATCH /api/rutas/:id
+export async function actualizarRuta(req, res) {
+  try {
+    const { id } = req.params;
+    const { nombre } = req.body;
+
+
+    if (!nombre || typeof nombre !== 'string') {
+      return res.status(400).json({ error: 'Nombre inválido' });
+    }
+
+    const ruta = await Ruta.findById(id);
+
+    if (!ruta) {
+      return res.status(404).json({ error: 'Ruta no encontrada' });
+    }
+
+    ruta.nombre = nombre;
+    await ruta.save();
+
+    res.status(200).json(ruta);
+  } catch (error) {
+    console.error('Error al actualizar la ruta:', error);
+    res.status(500).json({ error: 'Error al actualizar la ruta' });
+  }
+}
+
+
+// DELETE /api/rutas/:id
+export async function eliminarRuta(req, res) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'No autenticado' });
+  }
+
+  try {
+    const rutaId = req.params.id;
+
+    // Verificar si la ruta existe
+    const ruta = await Ruta.findById(rutaId);
+    if (!ruta) {
+      return res.status(404).json({ error: 'Ruta no encontrada' });
+    }
+
+    // Verificar si pertenece al usuario actual
+    const usuario = await Usuario.findById(req.user._id);
+    if (!usuario.rutasCreadas.includes(rutaId)) {
+      return res.status(403).json({ error: 'No autorizado para eliminar esta ruta' });
+    }
+
+    // Eliminar la ruta
+    await Ruta.findByIdAndDelete(rutaId);
+
+    // Eliminar referencia de rutasCreadas del usuario
+    usuario.rutasCreadas = usuario.rutasCreadas.filter(id => id.toString() !== rutaId);
+    await usuario.save();
+
+    res.status(200).json({ mensaje: 'Ruta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar ruta:', error);
+    res.status(500).json({ error: 'Error interno al eliminar la ruta' });
+  }
+}
