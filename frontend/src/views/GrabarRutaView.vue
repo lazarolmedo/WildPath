@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import axios from 'axios';
   export default {
     name: 'GrabarRutaView',
     data() {
@@ -265,8 +266,16 @@
         return "Desconocido";
       },
       guardarRuta() {
-        console.log('Ruta guardada:', this.ruta);
-        this.$router.push('/'); // Redirigir al home después de guardar
+        axios.post('/api/rutas', this.ruta)
+    .then(response => {
+          console.log('Ruta guardada en el servidor:', response.data);
+          alert('Ruta guardada con éxito');
+          this.$router.push('/');
+        })
+        .catch(error => {
+          console.error('Error al guardar la ruta:', error);
+          alert('No se pudo guardar la ruta. Intenta de nuevo.');
+        });
       },
       cancelar() {
         this.mostrarFormulario = false;
