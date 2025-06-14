@@ -58,7 +58,7 @@ export async function crearRuta(req, res) {
       $push: { rutasCreadas: nuevaRuta._id }
     });
 
-    res.status(201).json(nuevaRuta);
+    res.status(201).location(`/api/rutas/${nuevaRuta._id}`).json(nuevaRuta);
   } catch (error) {
     console.error('Error al crear la ruta:', error);
     res.status(500).json({ error: 'Error al crear la ruta' });
