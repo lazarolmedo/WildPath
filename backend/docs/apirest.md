@@ -193,7 +193,9 @@ Añade un nuevo comentario a una ruta ya existente.
 
 * **Respuestas**:
 
-  * `201 Created` - Comentario añadido correctamente
+  * `201 Created` - Ruta creada exitosamente  
+    * Cabecera `Location`: URL del nuevo recurso (ej. `/api/rutas/{id}`)  
+    * Cuerpo: objeto JSON de la ruta creada
   * `400 Bad Request` - Datos incompletos o inválidos
   * `404 Not Found` - Ruta no encontrada
   * `500 Internal Server Error` - Error del servidor
@@ -246,7 +248,9 @@ Añade un nuevo comentario a una ruta ya existente.
 
 * **Respuestas**:
 
-  * `201 Created` - Usuario  creado exitosamente
+  * `201 Created` - Usuario creado exitosamente  
+    * Cabecera `Location`: URL del nuevo recurso (ej. `/api/usuarios/{id}`)  
+    * Cuerpo: objeto JSON del usuario creado
   * `400 Bad Request` - Faltan campos o datos inválidos
   * `500 Internal Server Error` - Fallo al guardar
 
