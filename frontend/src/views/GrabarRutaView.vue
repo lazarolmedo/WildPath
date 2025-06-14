@@ -2,7 +2,8 @@
   <main class="container-fluid p-4">
     <!-- Mapa ancho completo -->
     <section class="position-relative mb-4">
-      <img src="/mapa.png" alt="Mapa en vivo" class="w-100 rounded" style="height: 75vh; object-fit: cover;">
+      <!-- <img src="/mapa.png" alt="Mapa en vivo" class="w-100 rounded" style="height: 75vh; object-fit: cover;"> -->
+      <div id="map" class="w-100 rounded shadow-sm" style="height: 400px; border-radius: 0.75rem;"></div>
 
       <!-- Botón cuadrado para grabar -->
       <button 
@@ -12,7 +13,7 @@
         @click="iniciarGrabacion"
         aria-label="Iniciar grabación"
       >
-        ▶
+        ▶ 
       </button>
 
       <!-- Botón cuadrado para detener -->
@@ -41,11 +42,7 @@
           <input type="text" id="ubicacion" v-model="ruta.ubicacion" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-          <label for="descripcion" class="form-label">Descripción</label>
-          <textarea id="descripcion" v-model="ruta.descripcion" class="form-control" rows="3"></textarea>
-        </div>
-
+        
         <div class="mb-3">
           <label for="dificultad" class="form-label">Dificultad</label>
           <select id="dificultad" v-model="ruta.dificultad" class="form-select" required>
@@ -78,6 +75,11 @@
           <input type="number" id="altitud" v-model="ruta.altitud" class="form-control" required>
         </div>
 
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea id="descripcion" v-model="ruta.descripcion" class="form-control" rows="3"></textarea>
+        </div>
+
         <div class="d-flex justify-content-between">
           <button type="button" class="btn btn-secondary" @click="cancelar">
             Cancelar
@@ -104,18 +106,137 @@
           descripcion: '',
           dificultad: '',
           distanciaKm: 0,
+          altitud: 0,
           duracionEstimada: 0,
           travelMode: 'walking',
-          altitud: 0
-        }
+        },
+        coordenadas: [], // Para almacenar las coordenadas de la ruta
+        mapa: null, // Para almacenar la instancia del mapa
+        polyline: null, // Para almacenar la instancia de la polilínea
+        watchId: null, // Para almacenar el ID del watchPosition
+        marcadorInicio: null, 
+        marcadorFin: null,
       };
     },
     methods: {
+      initMap() {
+        // Verificar si Google Maps está disponible
+        if (typeof google === 'undefined' || !google.maps) {
+          console.error('Google Maps no está disponible');
+          return;
+        }
+
+        // Inicializar el mapa si no está ya inicializado
+        if (!this.mapa) {
+          this.mapa = new google.maps.Map(document.getElementById("map"), {
+            zoom: 19,
+            center: { lat: 40.4168, lng: -3.7038 }, // o cualquier valor inicial por defecto
+            //mapTypeId: 'satellite',
+            streetViewControl: false,
+            mapTypeControl: true
+          });
+          // Crear la polilínea para dibujar la ruta
+          this.polyline = new google.maps.Polyline({
+            map: this.mapa,
+            path: [],
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+          });
+        }
+      },
       iniciarGrabacion() {
-        this.grabando = true;
+
+        this.grabando = true; // Cambiar estado a grabando
+        // Mostrar el formulario para guardar la ruta
+        this.watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const latLng = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            //guardar el primer punto como inicio
+            if (this.coordenadas.length === 0) {
+              // Guardar el primer punto
+              this.marcadorInicio = new google.maps.Marker({
+                position: latLng,
+                map: this.mapa,
+                label: 'Inicio',
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 20,
+                  fillColor: '#28a745',
+                  fillOpacity: 1,
+                  strokeColor: '#1c7430',
+                  strokeWeight: 2
+                }
+              });
+            }
+
+            this.coordenadas.push(latLng);
+
+            // crear objeto LatLng válido para la Polyline
+            const punto = new google.maps.LatLng(latLng.lat, latLng.lng);
+            this.polyline.getPath().push(punto);
+
+            this.mapa.setCenter(latLng);
+
+          },
+          (error) => {
+            console.error("Error obteniendo ubicación:", error);
+          },
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000  }
+        );
+
       },
       detenerGrabacion() {
-        this.mostrarFormulario = true;
+        if (!this.grabando) return;
+        this.grabando = false;
+
+        // Detener seguimiento de ubicación
+        if (this.watchId !== null) {
+          navigator.geolocation.clearWatch(this.watchId);
+          this.watchId = null;
+        }
+
+        // Guardar y normalizar coordenadas
+         this.ruta.coordenadas = this.coordenadas.map(p => {
+            return {
+              lat: typeof p.lat === 'function' ? p.lat() : Number(p.lat),
+              lng: typeof p.lng === 'function' ? p.lng() : Number(p.lng)
+            };
+          });
+
+        // Calcular distancia total
+        if (this.ruta.coordenadas.length >= 2 && google.maps.geometry) {
+          const path = this.ruta.coordenadas.map(p => new google.maps.LatLng(p.lat, p.lng));
+          const distanciaMetros = google.maps.geometry.spherical.computeLength(path);
+          this.ruta.distanciaKm = (distanciaMetros / 1000).toFixed(2);
+
+          // Estimar duración (velocidad promedio)
+          const velocidadKmH = this.ruta.travelMode === 'walking' ? 5 : 15;
+          this.ruta.duracionEstimada = (this.ruta.distanciaKm / velocidadKmH).toFixed(2);
+        }
+
+        // Obtener ubicación de inicio y final con geocodificación inversa
+          const geocoder = new google.maps.Geocoder();
+          const puntoInicio = this.ruta.coordenadas[0];
+          const puntoFinal = this.ruta.coordenadas[this.ruta.coordenadas.length - 1];
+
+          geocoder.geocode({ location: puntoInicio }, (resultsInicio, statusInicio) => {
+            const inicio = (statusInicio === "OK" && resultsInicio[0]) ? resultsInicio[0].formatted_address : "Inicio desconocido";
+
+            geocoder.geocode({ location: puntoFinal }, (resultsFin, statusFin) => {
+              const fin = (statusFin === "OK" && resultsFin[0]) ? resultsFin[0].formatted_address : "Final desconocido";
+
+              // Combinar direcciones
+              this.ruta.ubicacion = `${inicio} – ${fin}`;
+
+              // Mostrar formulario después de ambas geocodificaciones
+              this.mostrarFormulario = true;
+            });
+          });
+
       },
       guardarRuta() {
         console.log('Ruta guardada:', this.ruta);
@@ -126,15 +247,18 @@
         this.grabando = false; // Detener grabación si se cancela
         this.ruta = { 
           nombre: '',
-           ubicacion: '',
-           descripcion: '',
-           dificultad: '',
-           distanciaKm: 0,
-           duracionEstimada: 0,
-           travelMode: 'walking',
-           altitud: 0
+          ubicacion: '',
+          descripcion: '',
+          dificultad: '',
+          distanciaKm: 0,
+          duracionEstimada: 0,
+          travelMode: 'walking',
+          altitud: 0,
+          coordenadas: []
          };
       }
+    },mounted() {
+      this.initMap(); // Inicializar el mapa al montar el componente
     }
   };
 </script>
