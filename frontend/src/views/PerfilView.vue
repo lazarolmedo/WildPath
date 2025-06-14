@@ -79,7 +79,7 @@
           <div v-for="ruta in usuario.rutasCreadas" :key="ruta._id" class="col-12 col-md-6 mb-4">
             <article
               class="card p-3 shadow-sm route-card h-100"
-              @click="$router.push({ path: `/ruta/${ruta._id}`, query: { from: 'perfil' } })"
+              @click="irARuta(ruta._id)" 
               style="cursor: pointer;"
             >
               <div class="d-flex align-items-center">
@@ -92,8 +92,36 @@
                   style="object-fit: cover;"
                 />
                 <div>
-                  <h3 class="mb-1">{{ ruta.nombre }}</h3>
-                  <p class="mb-0 text-muted">{{ ruta.ubicacion }}</p>
+                 <!-- Modo visual -->
+                  <h3 v-if="rutaEditandoId !== ruta._id"
+                      class="mb-1"
+                      style="cursor: pointer;"
+                      @click.stop="irARuta(ruta._id)">
+                    {{ ruta.nombre }}
+                  </h3>
+
+                  <!-- Modo edición -->
+                  <form v-else @submit.prevent.stop="guardarNuevoNombre(ruta)" @click.stop class="mb-2">
+                    <input type="text"
+                          v-model="nuevoNombreRuta"
+                          class="form-control form-control-sm mb-2"
+                          required />
+                    <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-sm btn-primary" @click.stop>Guardar</button>
+                      <button type="button" class="btn btn-sm btn-secondary" @click.stop="cancelarEdicionRuta">Cancelar</button>
+                    </div>
+                  </form>
+
+                  <!-- Mostrar ubicación y botones de acción -->
+                  <p class="mb-2 text-muted">{{ ruta.ubicacion }}</p>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" @click.stop="editarRuta(ruta)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" @click.stop="eliminarRuta(ruta._id)">
+                      <i class="bi bi-trash"></i>
+                    </button> 
+                  </div>
                 </div>
               </div>
             </article>
@@ -119,7 +147,9 @@ export default {
         email: '',
         estadisticas: {},
         rutasCreadas: []
-      }
+      },
+      rutaEditandoId: null, // <- ID de la ruta que se está editando
+      nuevoNombreRuta: '',  // <- Nuevo nombre que se está escribiendo
     };
   },
   mounted() {
@@ -135,6 +165,48 @@ export default {
         this.logueado = true;
       } catch (error) {
         this.logueado = false;
+      }
+    },
+    // Nuevo método para evitar navegación si se está editando
+    async irARuta(rutaId) {
+      if (!this.rutaEditandoId) {
+        this.$router.push({ path: `/ruta/${rutaId}`, query: { from: 'perfil' } });
+      }
+    },
+    async editarRuta(ruta) {
+      console.log(ruta._id);
+
+      this.rutaEditandoId = ruta._id;
+      this.nuevoNombreRuta = ruta.nombre;
+    },
+    async guardarNuevoNombre(ruta) {
+      if (!this.nuevoNombreRuta.trim()) return;
+      try {
+        await axios.patch(`http://localhost:3000/api/rutas/${ruta._id}`, {
+          nombre: this.nuevoNombreRuta.trim()
+        }, { withCredentials: true });
+        ruta.nombre = this.nuevoNombreRuta.trim(); // Actualiza localmente
+        this.rutaEditandoId = null;
+        this.nuevoNombreRuta = '';
+      } catch (error) {
+        alert('No se pudo guardar el nuevo nombre.');
+      }
+    },
+    async cancelarEdicionRuta() {
+      this.rutaEditandoId = null;
+      this.nuevoNombreRuta = '';
+    },
+    async eliminarRuta(rutaId) {
+      const confirmar = confirm('¿Estás seguro de que quieres eliminar esta ruta?');
+      if (confirmar) {
+        try {
+          await axios.delete(`http://localhost:3000/api/rutas/${rutaId}`, {
+            withCredentials: true
+          });
+          this.usuario.rutasCreadas = this.usuario.rutasCreadas.filter(r => r._id !== rutaId);
+        } catch (error) {
+          alert('No se pudo eliminar la ruta.');
+        }
       }
     },
     async guardarCambios() {
