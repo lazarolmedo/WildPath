@@ -131,9 +131,9 @@
           this.mapa = new google.maps.Map(document.getElementById("map"), {
             zoom: 19,
             center: { lat: 40.4168, lng: -3.7038 }, // o cualquier valor inicial por defecto
-            //mapTypeId: 'satellite',
+            mapTypeId: 'hybrid',
             streetViewControl: false,
-            mapTypeControl: true
+            mapTypeControl: false
           });
           // Crear la polilínea para dibujar la ruta
           this.polyline = new google.maps.Polyline({
@@ -172,7 +172,6 @@
                 }
               });
             }
-
             this.coordenadas.push(latLng);
 
             // crear objeto LatLng válido para la Polyline
@@ -224,19 +223,46 @@
           const puntoFinal = this.ruta.coordenadas[this.ruta.coordenadas.length - 1];
 
           geocoder.geocode({ location: puntoInicio }, (resultsInicio, statusInicio) => {
-            const inicio = (statusInicio === "OK" && resultsInicio[0]) ? resultsInicio[0].formatted_address : "Inicio desconocido";
+            if (statusInicio === "OK" && resultsInicio.length) {
+              const puebloInicio = this.extraerPueblo(resultsInicio);
 
-            geocoder.geocode({ location: puntoFinal }, (resultsFin, statusFin) => {
-              const fin = (statusFin === "OK" && resultsFin[0]) ? resultsFin[0].formatted_address : "Final desconocido";
+              geocoder.geocode({ location: puntoFinal }, (resultsFin, statusFin) => {
+                if (statusFin === "OK" && resultsFin.length) {
+                  const puebloFin = this.extraerPueblo(resultsFin);
 
-              // Combinar direcciones
-              this.ruta.ubicacion = `${inicio} – ${fin}`;
+                  // Si ambos pueblos son iguales, muestra solo uno
+                  this.ruta.ubicacion = (puebloInicio === puebloFin)
+                    ? puebloInicio
+                    : `${puebloInicio} – ${puebloFin}`;
 
-              // Mostrar formulario después de ambas geocodificaciones
+                  this.mostrarFormulario = true;
+                } else {
+                  console.error("Error obteniendo dirección final");
+                  this.ruta.ubicacion = puebloInicio;
+                  this.mostrarFormulario = true;
+                }
+              });
+
+            } else {
+              console.error("Error obteniendo dirección inicial");
+              this.ruta.ubicacion = "Ubicación desconocida";
               this.mostrarFormulario = true;
-            });
-          });
+            }
+        });
+      },
+      extraerPueblo(resultados) {
+        if (!resultados || resultados.length === 0) return "Desconocido";
 
+        const componentes = resultados[0].address_components;
+
+        const prioridad = [ "sublocality","locality", "administrative_area_level_2"];
+
+        for (const tipo of prioridad) {
+          const componente = componentes.find(c => c.types.includes(tipo));
+          if (componente) return componente.long_name;
+        }
+
+        return "Desconocido";
       },
       guardarRuta() {
         console.log('Ruta guardada:', this.ruta);
@@ -256,6 +282,9 @@
           altitud: 0,
           coordenadas: []
          };
+         if (confirm("¿Estás seguro de que quieres cancelar y recargar la página? Se perderán los datos no guardados.")) {
+            location.reload();
+          }
       }
     },mounted() {
       this.initMap(); // Inicializar el mapa al montar el componente

@@ -30,7 +30,7 @@ export async function crearUsuario(req, res) {
     });
 
     await nuevoUsuario.save();
-    res.status(201).json(nuevoUsuario);
+    res.status(201).location(`/api/usuarios/${nuevoUsuario._id}`).json(nuevoUsuario);
   } catch (error) {
     console.error('Error al crear el usuario:', error);
     res.status(400).json({ error: 'Datos inválidos o error al guardar' });
