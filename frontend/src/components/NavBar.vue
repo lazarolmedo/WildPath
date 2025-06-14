@@ -7,7 +7,7 @@
           <img src="/logo-wildpath.png" alt="Logo WildPath" class="logo-wildpath" />
         </router-link>
         <router-link to="/" class="nav-link custom-nav-link" active-class="active">Home</router-link>
-        <router-link to="/grabar" class="nav-link custom-nav-link" active-class="active">Grabar Ruta</router-link>
+        <router-link v-if="logueado" to="/grabar" class="nav-link custom-nav-link" active-class="active">Grabar Ruta</router-link>
       </div>
 
       <!-- Icono perfil dinámico -->
