@@ -7,85 +7,83 @@
         <h1 class="display-5 fw-bold text-success">Explora sin límites</h1>
         <p class="lead">Graba, comparte y descubre rutas inolvidables por la naturaleza.</p>
       </section>
-    <!-- Carrusel automático sin botones, adaptado correctamente -->
-    <section class="mb-5 px-4">
-      <div
-        id="wildpathCarousel"
-        class="carousel slide carousel-fade"
-        data-bs-ride="carousel"
-        data-bs-interval="4000"
-      >
-        <div class="carousel-inner rounded overflow-hidden shadow fixed-ratio">
-          <!-- Slide 1 -->
-          <div class="carousel-item active">
-            <img
-              src="/img/montaña.jpg"
-              class="d-block w-100"
-              alt="Ruta de montaña"
-              style="width: 100%; height: auto; max-height: 400px; object-fit: cover;"
-            />
-            <div class="carousel-caption d-block caption-clean">
-              <p>Desafía tus límites y conquista nuevas alturas.</p>
+      <!-- Carrusel automático sin botones, adaptado correctamente -->
+      <section class="mb-5 px-4">
+        <div
+          id="wildpathCarousel"
+          class="carousel slide carousel-fade"
+          data-bs-ride="carousel"
+          data-bs-interval="4000"
+        >
+          <div class="carousel-inner rounded overflow-hidden shadow fixed-ratio">
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+              <img
+                src="/img/montaña.jpg"
+                class="d-block w-100"
+                alt="Ruta de montaña"
+                style="width: 100%; height: auto; max-height: 400px; object-fit: cover"
+              />
+              <div class="carousel-caption d-block caption-clean">
+                <p>Desafía tus límites y conquista nuevas alturas.</p>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+              <img
+                src="/img/bosque.jpg"
+                class="d-block w-100"
+                alt="Sendero en el bosque"
+                style="width: 100%; height: auto; max-height: 400px; object-fit: cover"
+              />
+              <div class="carousel-caption d-block caption-clean">
+                <p>Sumérgete en la tranquilidad de los senderos naturales.</p>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+              <img
+                src="/img/costa.jpg"
+                class="d-block w-100"
+                alt="Ruta costera"
+                style="width: 100%; height: auto; max-height: 400px; object-fit: cover"
+              />
+              <div class="carousel-caption d-block caption-clean">
+                <p>Explora rutas únicas junto al mar, el bosque o la montaña.</p>
+              </div>
             </div>
           </div>
-
-          <!-- Slide 2 -->
-          <div class="carousel-item">
-            <img
-              src="/img/bosque.jpg"
-              class="d-block w-100"
-              alt="Sendero en el bosque"
-              style="width: 100%; height: auto; max-height: 400px; object-fit: cover;"
-            />
-            <div class="carousel-caption d-block caption-clean">
-              <p>Sumérgete en la tranquilidad de los senderos naturales.</p>
-            </div>
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="carousel-item">
-            <img
-              src="/img/costa.jpg"
-              class="d-block w-100"
-              alt="Ruta costera"
-              style="width: 100%; height: auto; max-height: 400px; object-fit: cover;"
-            />
-            <div class="carousel-caption d-block caption-clean">
-              <p>Explora rutas únicas junto al mar, el bosque o la montaña.</p>
-            </div>
-          </div>
-
         </div>
-      </div>
-    </section>
+      </section>
 
-    <hr class="my-4 mx-auto" style="width: 80px; border-top: 3px solid var(--everglade-400); border-radius: 2px;" />
+      <hr
+        class="my-4 mx-auto"
+        style="width: 80px; border-top: 3px solid var(--everglade-400); border-radius: 2px"
+      />
 
       <!-- Rutas -->
       <section class="px-4">
         <h2 class="mb-3">Explora las rutas disponibles</h2>
 
-      <!-- Buscador -->
-      <div class="mb-4 px-4">
-        <input
-          type="search"
-          class="form-control w-50 mx-auto"
-          placeholder="Buscar rutas o ciudad"
-          aria-label="Buscar rutas o ciudad"
-          v-model="busqueda"
-        />
-      </div>
+        <!-- Buscador -->
+        <div class="mb-4 px-4">
+          <input
+            type="search"
+            class="form-control w-50 mx-auto"
+            placeholder="Buscar rutas o ciudad"
+            aria-label="Buscar rutas o ciudad"
+            v-model="busqueda"
+          />
+        </div>
 
         <div v-if="rutasFiltradas.length > 0" class="row">
-          <div
-            v-for="ruta in rutasFiltradas"
-            :key="ruta._id"
-            class="col-12 col-md-6 mb-4"
-          >
+          <div v-for="ruta in rutasFiltradas" :key="ruta._id" class="col-12 col-md-6 mb-4">
             <article
               class="card p-3 shadow-sm route-card h-100"
               @click="verRuta(ruta._id)"
-              style="cursor: pointer;"
+              style="cursor: pointer"
             >
               <div class="d-flex align-items-center">
                 <img
@@ -94,7 +92,7 @@
                   class="me-3 rounded"
                   width="100"
                   height="100"
-                  style="object-fit: cover;"
+                  style="object-fit: cover"
                 />
                 <div>
                   <h3 class="mb-1">{{ ruta.nombre }}</h3>
@@ -111,11 +109,19 @@
 
         <!-- Controles de paginación -->
         <div v-if="totalPaginas > 1" class="text-center my-4">
-          <button @click="currentPage--" :disabled="currentPage === 1" class="btn btn-outline-success me-2">
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="btn btn-outline-success me-2"
+          >
             Anterior
           </button>
           <span>Página {{ currentPage }} de {{ totalPaginas }}</span>
-          <button @click="currentPage++" :disabled="currentPage === totalPaginas" class="btn btn-outline-success ms-2">
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPaginas"
+            class="btn btn-outline-success ms-2"
+          >
             Siguiente
           </button>
         </div>
@@ -125,9 +131,11 @@
     <!-- SVG decorativo montaña -->
     <div class="svg-decor">
       <svg viewBox="0 0 1440 160" preserveAspectRatio="none" class="w-100">
-        <path fill="var(--everglade-700)" fill-opacity="1"
-          d="M0,144L40,136C80,128,160,112,240,112C320,112,400,128,480,120C560,112,640,80,720,72C800,64,880,76,960,88C1040,100,1120,112,1200,112C1280,112,1360,96,1400,88L1440,80L1440,160L0,160Z">
-        </path>
+        <path
+          fill="var(--everglade-700)"
+          fill-opacity="1"
+          d="M0,144L40,136C80,128,160,112,240,112C320,112,400,128,480,120C560,112,640,80,720,72C800,64,880,76,960,88C1040,100,1120,112,1200,112C1280,112,1360,96,1400,88L1440,80L1440,160L0,160Z"
+        ></path>
       </svg>
     </div>
 
@@ -172,7 +180,7 @@
   position: absolute;
   color: white;
   font-weight: 500;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 1); 
+  text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
 .carrusel-img {
@@ -182,7 +190,7 @@
 </style>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   data() {
@@ -190,44 +198,46 @@ export default {
       rutas: [],
       busqueda: '',
       currentPage: 1,
-      rutasPorPagina: 6
-    };
+      rutasPorPagina: 6,
+    }
   },
   computed: {
     rutasFiltradas() {
-      const filtro = this.busqueda.trim().toLowerCase();
-      const filtradas = this.rutas.filter(r =>
-        r.nombre.toLowerCase().includes(filtro) || r.ubicacion.toLowerCase().includes(filtro)
-      );
+      const filtro = this.busqueda.trim().toLowerCase()
+      const filtradas = this.rutas.filter(
+        (r) =>
+          r.nombre.toLowerCase().includes(filtro) || r.ubicacion.toLowerCase().includes(filtro),
+      )
 
-      const inicio = (this.currentPage - 1) * this.rutasPorPagina;
-      return filtradas.slice(inicio, inicio + this.rutasPorPagina);
+      const inicio = (this.currentPage - 1) * this.rutasPorPagina
+      return filtradas.slice(inicio, inicio + this.rutasPorPagina)
     },
     totalPaginas() {
-      const filtro = this.busqueda.trim().toLowerCase();
-      const total = this.rutas.filter(r =>
-        r.nombre.toLowerCase().includes(filtro) || r.ubicacion.toLowerCase().includes(filtro)
-      );
-      return Math.ceil(total.length / this.rutasPorPagina);
-    }
+      const filtro = this.busqueda.trim().toLowerCase()
+      const total = this.rutas.filter(
+        (r) =>
+          r.nombre.toLowerCase().includes(filtro) || r.ubicacion.toLowerCase().includes(filtro),
+      )
+      return Math.ceil(total.length / this.rutasPorPagina)
+    },
   },
   methods: {
     verRuta(id) {
-      this.$router.push(`/ruta/${id}`);
-    }
+      this.$router.push(`/ruta/${id}`)
+    },
   },
   watch: {
     busqueda() {
-      this.currentPage = 1;
-    }
+      this.currentPage = 1
+    },
   },
   async created() {
     try {
-      const res = await axios.get('http://localhost:3000/api/rutas');
-      this.rutas = res.data;
+      const res = await axios.get('http://localhost:3000/api/rutas')
+      this.rutas = res.data
     } catch (error) {
-      console.error('Error al cargar rutas:', error);
+      console.error('Error al cargar rutas:', error)
     }
-  }
-};
+  },
+}
 </script>

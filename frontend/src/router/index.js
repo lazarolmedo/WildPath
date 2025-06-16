@@ -8,12 +8,12 @@ const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/grabar', name: 'grabar', component: GrabarRutaView },
   { path: '/perfil', name: 'perfil', component: PerfilView },
-  { path: '/ruta/:id', name: 'rutaIndividual', component: RutaIndividualView }
+  { path: '/ruta/:id', name: 'rutaIndividual', component: RutaIndividualView },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
 })
 
 export default router
